@@ -38,8 +38,43 @@
 		{{outlet modal}}
 	</script>
 
-	<script type="text/x-handlebars" id="index">
-		<h3>Partie</h3>
+	<script type="text/x-handlebars" data-template-name="index">
+		{{view "partie"}}
+	</script>
+
+	<script type="text/x-handlebars" data-template-name="donnes">
+		<table class="table">
+			<thead>
+				<tr>
+					<td>Attaquant</td>
+					<td>Contrat</td>
+					<td>Points faits NS</td>
+					<td>Points faits EO</td>
+					<td>Points réel NS</td>
+					<td>Points réel EO</td>
+					<td>Points marqués NS</td>
+					<td>Points marqués EO</td>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each}}
+				<tr>
+					<td>{{attaquant}}</td>
+					<td>{{contrat}} {{couleur}}</td>
+					<td>{{ptsFaitsNS}}</td>
+					<td>{{ptsFaitsEO}}</td>
+					<td>{{ptsReelsNS}}</td>
+					<td>{{ptsReelsEO}}</td>
+					<td>{{ptsMarquesNS}}</td>
+					<td>{{ptsMarquesEO}}</td>
+				</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</script>
+
+	<script type="text/x-handlebars" data-template-name="partie">
+		<h3>Partie {{model.id}}</h3>
 		<table class="table">
 			<thead>
 				<tr>
@@ -49,87 +84,68 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td>{{scoreNS}}</td>
-					<td>{{scoreEO}}</td>
+					<td>{{model.scoreNS}}</td>
+					<td>{{model.scoreEO}}</td>
 				</tr>
 			</tbody>
 		</table>
-		<button {{action 'showModal' 'ajouterDonne-modal' model}} type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#ajouterDonne">
+		<button {{action 'showModal' 'ajouterDonneModal'}} type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#ajouterDonne">
 			<span class="glyphicon glyphicon-plus"></span> Ajouter une donne
 		</button>
 	</script>
 
-	<script type="text/x-handlebars" data-template-name="ajouterDonne-modal">
+	<script type="text/x-handlebars" data-template-name="ajouterDonneModal">
 		{{#my-modal title="Ajouter une donne" ok="save" close="removeModal"}}
 		<form class="form-horizontal" role="form" {{action 'ok' on='submit' target=view}}>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Attaquant</label>
 				<label class="radio-inline">
-					<input type="radio" name="radioNordSud" id="radioNordSud" value="NS"> Nord-Sud
+					{{view Ember.RadioButton name="newAttaquant" selectionBinding="model.attaquant" value="NS"}} Nord-Sud
 				</label>
 				<label class="radio-inline">
-					<input type="radio" name="radioEstOuest" id="radioEstOuest" value="EO"> Est-Ouest
+					{{view Ember.RadioButton name="newAttaquant" selectionBinding="model.attaquant" value="EO"}} Est-Ouest
 				</label>
 			</div>
 			<div class="form-group">
 				<label for="inputContrat" class="col-sm-2 control-label">Contrat</label>
 				<div class="col-sm-10">
-					<select class="form-control">
-						<option>80</option>
-						<option>90</option>
-						<option>100</option>
-						<option>110</option>
-						<option>120</option>
-						<option>130</option>
-						<option>140</option>
-						<option>150</option>
-						<option>160</option>
-						<option>170</option>
-						<option>Capot</option>
-					</select>
+					{{view Ember.Select content=contrats value=model.contrat classNames="form-control"}}
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="inputCouleur" class="col-sm-2 control-label">Couleur</label>
 				<div class="col-sm-10">
-					<select class="form-control">
-						<option>Coeur</option>
-						<option>Pique</option>
-						<option>Carreau</option>
-						<option>Trèfle</option>
-						<option>Tout-Atout</option>
-						<option>Sans-Atout</option>
-					</select>
+					{{view Ember.Select content=couleurs value=model.couleur classNames="form-control"}}
 				</div>
 			</div>
 			<div class="form-group">
 				<div class="col-sm-10">
 					<label for="inputPtsFaitsNS" class="col-sm-6 control-label">Points faits Nord-Sud</label>
-					<input type="number" name="ptsFaitsNS" id="ptsFaitsNS" value="0">
-					<input type="checkbox" name="beloteNS" id="beloteNS"> Belote
+					{{input type="number" id="ptsFaitsNS" value=model.ptsFaitsNS}}
+					{{input type="checkbox" name="beloteNS" checked=model.beloteNS}} Belote
 				</div>
 				<div class="col-sm-10">
 					<label for="inputPtsReelsNS" class="col-sm-6 control-label">Points réels Nord-Sud</label>
-					<input type="number" name="ptsReelsNS" id="ptsReelsNS" value="0">
+					{{input type="number" id="ptsReelsNS" value=model.ptsReelsNS}}
 				</div>
 				<div class="col-sm-10">
 					<label for="inputPtsMarquesNS" class="col-sm-6 control-label">Points marqués Nord-Sud</label>
-					<input type="number" name="ptsMarquesNS" id="ptsMarquesNS" value="0">
+					{{input type="number" id="ptsMarquesNS" value=model.ptsMarquesNS}}
 				</div>
 			</div>
 			<div class="form-group">
 				<div class="col-sm-10">
 					<label for="inputPtsFaitsEO" class="col-sm-6 control-label">Points faits Est-Ouest</label>
-					<input type="number" name="ptsFaitsEO" id="ptsFaitsEO" value="0">
-					<input type="checkbox" name="beloteEO" id="beloteEO"> Belote
+					{{input type="number" id="ptsFaitsEO" value=model.ptsFaitsEO}}
+					{{input type="checkbox" name="beloteEO" checked=model.beloteEO}} Belote
 				</div>
 				<div class="col-sm-10">
 					<label for="inputPtsReelsEO" class="col-sm-6 control-label">Points réels Est-Ouest</label>
-					<input type="number" name="ptsReelsEO" id="ptsReelsEO" value="0">
+					{{input type="number" id="ptsReelsEO" value=model.ptsReelsEO}}
 				</div>
 				<div class="col-sm-10">
 					<label for="inputPtsMarquesEO" class="col-sm-6 control-label">Points marqués Est-Ouest</label>
-					<input type="number" name="ptsMarquesEO" id="ptsMarquesEO" value="0">
+					{{input type="number" id="ptsMarquesEO" value=model.ptsMarquesEO}}
 				</div>
 			</div>
 		</form>
