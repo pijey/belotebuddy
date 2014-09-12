@@ -54,6 +54,7 @@
 
 	<script type="text/x-handlebars" data-template-name="donnes">
 		<h3>Donnes de la partie {{model.id}}</h3>
+		{{#if model.donnes}}
 		<table class="table">
 			<thead>
 				<tr>
@@ -84,12 +85,15 @@
 				{{/each}}
 			</tbody>
 		</table>
-
-		{{#link-to 'partie'}}Retour à la partie{{/link-to}}
+		{{else}}
+		Aucune donne dans cette partie.
+		{{/if}}
+		{{#link-to 'partie' model}}Retour à la partie{{/link-to}}
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="parties">
 		<h3>Liste des parties</h3>
+		{{#if model}}
 		<table class="table">
 			<thead>
 				<tr>
@@ -109,13 +113,15 @@
 						<button {{action 'deletePartie' id}} type="button" class="btn btn-default btn-sm" data-toggle="modal">
 							<span class="glyphicon glyphicon-delete"></span> Supprimer
 						</button>
-					 Voir les donnes</td>
+						{{#link-to 'donnes' id}}Voir les donnes{{/link-to}}
+					 </td>
 				</tr>
 				{{/each}}
 			</tbody>
 		</table>
-
-		{{#link-to 'partie'}}Retour à la partie{{/link-to}}
+		{{else}}
+		Aucune partie disponible. 
+		{{/if}}
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="partie">

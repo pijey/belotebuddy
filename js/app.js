@@ -1,6 +1,5 @@
 App = Ember.Application.create();
 
-//App.ApplicationAdapter = DS.FixtureAdapter.extend();
 App.ApplicationAdapter = DS.LSAdapter.extend({
   namespace: 'app-emberjs'
 });
@@ -33,7 +32,7 @@ App.DonnesRoute = Ember.Route.extend({
 
 App.ApplicationRoute = Ember.Route.extend({
 	model: function() {
-		return this.store.find('partie', {enCours: true});
+		return this.store.find('partie'/*, {enCours: true}*/);
 	},
 	actions: {
 		newPartie: function(){
@@ -50,7 +49,7 @@ App.ApplicationRoute = Ember.Route.extend({
 					}
 				}
 			});
-			this.transitionTo('partie');	
+			this.transitionTo('partie', partie);
 		},
 		showModal: function(name, partie) {
 			var newDonne = this.store.createRecord('donne', {
@@ -58,9 +57,6 @@ App.ApplicationRoute = Ember.Route.extend({
 				partie: partie
 			});
 			this.controllerFor(name).set('model', newDonne);
-			partie.get('donnes').then(function(){
-			    partie.get('donnes').addObject(newDonne);
-			});
 			this.render(name, {
 				into: 'application',
 				outlet: 'modal'
@@ -106,10 +102,16 @@ App.PartiesController = Ember.ArrayController.extend({
 App.AjouterDonneModalController = Ember.ObjectController.extend({
 	contrats: ['80','90','100','110','120','130','140','150','160','170',"Capot"],
 	couleurs: ["Coeur","Carreau","Pique","Trèfle","Sans-Atout","Tout-Atout"],
-	partie: {},
 	actions: {
 		save: function() {
-			this.model.save();
+			var that = this;
+			this.model.save().then(function(){
+				that.model.get('partie').get('donnes').then(function(){
+					that.model.get('partie').get('donnes').addObject(that.model);
+					that.model.get('partie').save();
+				});
+			});
+			
   		},
   		updatedPtsFaitsNS: function(){
   			this.model.set('ptsFaitsEO', 162 - parseInt(this.get('ptsFaitsNS')));
@@ -231,75 +233,6 @@ App.Donne = DS.Model.extend({
 	ptsReelsEO: attr('number'),
 	ptsMarquesNS: attr('number'),
 	ptsMarquesEO: attr('number'),
-	/*ptsReelsNS: function(){
-        return Math.round(this.get("ptsFaitsEO") / 10) * 10;
-    }.property("ptsFaitsEO"),
-    ptsReelsEO: function(){
-        return Math.round(this.get("ptsFaitsEO") / 10) * 10;
-    }.property("ptsFaitsEO"),
-	ptsMarquesNS: function(){
-		var ptsBeloteNS = 0;
-		if(this.get("beloteNS")){
-			ptsBeloteNS += 20;
-		}
-		var ptsBeloteEO = 0;
-		if(this.get("beloteEO")){
-			ptsBeloteEO += 20;
-		}
-		//NS attaquant
-		if(this.get("attaquant") === 'NS'){
-			var contrat = 250;
-			if(this.get("contrat") !== "Capot"){
-				contrat = parseInt(this.get("contrat"));
-			}
-			
-			if(this.get("ptsFaitsNS") + ptsBeloteNS >= contrat){
-				return parseInt(this.get("ptsReelsNS")) + contrat;
-			}
-			else {
-				return 0;
-			}
-		}
-		//NS défenseur
-		else if((162 - this.get("ptsFaitsNS") + ptsBeloteEO) < contrat){
-			return 160 + contrat;
-		}
-		else {
-			return this.get("ptsReelsNS") + ptsBeloteNS;
-		}
-		
-    }.property("ptsReelsNS", "attaquant", "contrat", "couleur", "beloteNS", "beloteEO"),
-    ptsMarquesEO: function(){
-		var ptsBeloteEO = 0;
-		if(this.get("beloteEO")){
-			ptsBeloteEO = 20;
-		}
-		var ptsBeloteNS = 0;
-		if(this.get("beloteNS")){
-			ptsBeloteNS = 20;
-		}
-		//EO attaquant
-		if(this.get("attaquant") === 'EO'){
-			var contrat = 250;
-			if(this.get("contrat") !== "Capot"){
-				contrat = parseInt(this.get("contrat"));
-			}
-			
-			if(this.get("ptsFaitsEO") + ptsBeloteEO >= contrat){
-				return parseInt(this.get("ptsReelsEO")) + contrat;
-			}
-			else {
-				return 0;
-			}
-		}
-		//NS défenseur
-		else if((162 - this.get("ptsFaitsEO") + ptsBeloteNS) < contrat){
-			return 160 + contrat;
-		}
-		else {
-			return parseInt(this.get("ptsReelsEO")) + ptsBeloteEO;
-		}
-    }.property("ptsReelsEO", "attaquant", "contrat", "couleur", "beloteNS", "beloteEO"),*/
 	beloteNS: attr('boolean', {defaultValue: false}),
 	beloteEO: attr('boolean', {defaultValue: false}),
 	partie: DS.belongsTo('partie')
@@ -322,16 +255,6 @@ App.Partie = DS.Model.extend({
     }.property("donnes.@each.ptsMarquesEO"),
 	donnes: DS.hasMany('donne', {async: true})
 });
-
-/*Fixtures
-App.Donne.FIXTURES = [
-	{ id: 1, attaquant: 'NS', contrat: '80', couleur: 'Coeur', ptsFaitsNS: 95, ptsFaitsEO: 67, beloteNS: false, beloteEO: false},
-	{ id: 2, attaquant: 'EO', contrat: '120', couleur: 'Pique', ptsFaitsEO: 144, ptsFaitsNS: 38, beloteNS: true, beloteEO: false}
-];
-
-App.Partie.FIXTURES = [
-	{id: 1,	enCours: true, donnes: [1,2]}
-];*/
 
 //Components
 App.MyModalComponent = Ember.Component.extend({
