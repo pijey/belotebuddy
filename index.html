@@ -23,7 +23,7 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Partie <span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
 								{{#each partie in model}}
-								<li>{{#link-to 'partie' partie}}Partie en cours{{/link-to}}</li>
+								<li>{{#link-to 'partie' partie}}Partie {{partie.id}}{{/link-to}}</li>
 								{{/each}}
 								<li><a href="#" {{action 'newPartie'}}>Nouvelle partie</a></li>
 								<li>{{#link-to 'parties'}}Toutes les parties{{/link-to}}</li>
@@ -66,6 +66,7 @@
 					<!--td>Points réel EO</td-->
 					<td>Points marqués NS</td>
 					<td>Points marqués EO</td>
+					<td>Donne faite ?</td>
 					<td>Actions</td>
 				</tr>
 			</thead>
@@ -80,7 +81,18 @@
 					<!--td>{{ptsReelsEO}}</td-->
 					<td>{{ptsMarquesNS}}</td>
 					<td>{{ptsMarquesEO}}</td>
-					<td>Supprimer</td>
+					<td>
+						{{#if donneFaite}}
+							<span class="glyphicon glyphicon-ok"></span> de {{diffContrat}} 
+						{{else}}
+							<span class="glyphicon glyphicon-remove"></span> de {{diffContrat}}
+						{{/if}}
+					</td>
+					<td>
+						<button {{action 'deleteDonne' id}} type="button" class="btn btn-default btn-sm">
+							<span class="glyphicon glyphicon-remove"></span> Supprimer
+						</button>
+					</td>
 				</tr>
 				{{/each}}
 			</tbody>
@@ -89,6 +101,56 @@
 		Aucune donne dans cette partie.
 		{{/if}}
 		{{#link-to 'partie' model}}Retour à la partie{{/link-to}}
+	</script>
+
+	<script type="text/x-handlebars" data-template-name="alldonnes">
+		<h3>Toutes les donnes</h3>
+		{{#if model}}
+		<table class="table">
+			<thead>
+				<tr>
+					<td>Attaquant</td>
+					<td>Contrat</td>
+					<!--td>Points faits NS</td-->
+					<!--td>Points faits EO</td-->
+					<!--td>Points réel NS</td-->
+					<!--td>Points réel EO</td-->
+					<td>Points marqués NS</td>
+					<td>Points marqués EO</td>
+					<td>Donne faite ?</td>
+					<td>Actions</td>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each}}
+				<tr>
+					<td>{{id}}</td>
+					<td>{{contrat}} {{couleur}}</td>
+					<!--td>{{ptsFaitsNS}}</td-->
+					<!--td>{{ptsFaitsEO}}</td-->
+					<!--td>{{ptsReelsNS}}</td-->
+					<!--td>{{ptsReelsEO}}</td-->
+					<td>{{ptsMarquesNS}}</td>
+					<td>{{ptsMarquesEO}}</td>
+					<td>
+						{{#if donneFaite}}
+							<span class="glyphicon glyphicon-ok"></span> de {{diffContrat}} 
+						{{else}}
+							<span class="glyphicon glyphicon-remove"></span> de {{diffContrat}}
+						{{/if}}
+					</td>
+					<td>
+						<button {{action 'deleteDonne' donne}} type="button" class="btn btn-default btn-sm">
+							<span class="glyphicon glyphicon-remove"></span> Supprimer
+						</button>
+					</td>
+				</tr>
+				{{/each}}
+			</tbody>
+		</table>
+		{{else}}
+		Aucune donne
+		{{/if}}
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="parties">
@@ -111,7 +173,7 @@
 					<td>{{enCours}}</td>
 					<td>
 						<button {{action 'deletePartie' id}} type="button" class="btn btn-default btn-sm" data-toggle="modal">
-							<span class="glyphicon glyphicon-delete"></span> Supprimer
+							<span class="glyphicon glyphicon-remove"></span> Supprimer
 						</button>
 						{{#link-to 'donnes' id}}Voir les donnes{{/link-to}}
 					 </td>

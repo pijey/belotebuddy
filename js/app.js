@@ -9,6 +9,7 @@ App.Router.map(function() {
 	this.route("partie", {path: "/partie/:partie_id"});
 	this.route("parties", {path: "/parties"});
 	this.route("donnes", {path: "/donnes/:partie_id"});
+	this.route("alldonnes", {path: "/alldonnes"});
 });
 
 //Routes
@@ -21,6 +22,12 @@ App.PartieRoute = Ember.Route.extend({
 App.PartiesRoute = Ember.Route.extend({
 	model: function() {
 		return this.store.find('partie');
+	}
+});
+
+App.AllDonnesRoute = Ember.Route.extend({
+	model: function() {
+		return this.store.all('donne');
 	}
 });
 
@@ -37,7 +44,7 @@ App.ApplicationRoute = Ember.Route.extend({
 	actions: {
 		newPartie: function(){
 			var partie = this.store.createRecord('partie', {enCours: true, date: new Date()});
-			partie = partie.save();
+			partie.save();
 			this.set('model',partie);
 			this.controllerFor('partie').set('model', partie);
 			this.store.find('partie', {enCours: true}).then(function(parties){
@@ -53,8 +60,7 @@ App.ApplicationRoute = Ember.Route.extend({
 		},
 		showModal: function(name, partie) {
 			var newDonne = this.store.createRecord('donne', {
-				attaquant: 'NS',
-				partie: partie
+				attaquant: 'NS'
 			});
 			this.controllerFor(name).set('model', newDonne);
 			this.render(name, {
@@ -99,19 +105,42 @@ App.PartiesController = Ember.ArrayController.extend({
 	}
 });
 
+App.AllDonnesController = Ember.ArrayController.extend({
+	actions:{
+		deleteDonne: function(id){
+			this.store.find('donne', id).then(function (donne) {
+			  donne.destroyRecord(); 
+			});
+		}
+	}
+});
+
+App.DonnesController = Ember.ObjectController.extend({
+	actions:{
+		deleteDonne: function(id){
+			this.store.find('donne', id).then(function (donne) {
+			  donne.destroyRecord(); 
+			});
+		}
+	}
+});
+
 App.AjouterDonneModalController = Ember.ObjectController.extend({
 	contrats: ['80','90','100','110','120','130','140','150','160','170',"Capot"],
 	couleurs: ["Coeur","Carreau","Pique","Trèfle","Sans-Atout","Tout-Atout"],
+	needs: "partie",
+	partie: Ember.computed.alias("controllers.partie.model"), 
 	actions: {
 		save: function() {
-			var that = this;
-			this.model.save().then(function(){
-				that.model.get('partie').get('donnes').then(function(){
-					that.model.get('partie').get('donnes').addObject(that.model);
-					that.model.get('partie').save();
-				});
+			var partie = this.get("partie");
+			var donne = this.model;
+			var donnes = partie.get('donnes');
+
+			donnes.addObject(donne);
+			donne.set('partie', partie);
+			donne.save().then(function(){
+				partie.save();	
 			});
-			
   		},
   		updatedPtsFaitsNS: function(){
   			this.model.set('ptsFaitsEO', 162 - parseInt(this.get('ptsFaitsNS')));
@@ -198,6 +227,7 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 		
 		if(contrat <= ptsmarques)
 		{
+			this.model.set('donneFaite', true);
 			if(this.model.get('attaquant') === 'NS'){
 				this.model.set('ptsMarquesNS',ptsMarquesAttaque + contrat);
 				this.model.set('ptsMarquesEO',ptsMarquesDefense);
@@ -209,6 +239,7 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 		}
 		else
 		{
+			this.model.set('donneFaite', false);
 			if(this.model.get('attaquant') === 'NS'){
 				this.model.set('ptsMarquesNS',0);
 				this.model.set('ptsMarquesEO',160 + contrat);
@@ -233,6 +264,15 @@ App.Donne = DS.Model.extend({
 	ptsReelsEO: attr('number'),
 	ptsMarquesNS: attr('number'),
 	ptsMarquesEO: attr('number'),
+	donneFaite: attr('boolean'),
+	diffContrat: function(){
+		if(this.get('attaquant') === 'NS'){
+			return Math.abs(parseInt(this.get('contrat') - this.get('ptsFaitsNS')));
+		} 
+		else {
+			return Math.abs(parseInt(this.get('contrat') - this.get('ptsFaitsEO')));
+		}
+	}.property('contrat', 'attaquant', 'ptsFaitsNS', 'ptsFaitsEO'),
 	beloteNS: attr('boolean', {defaultValue: false}),
 	beloteEO: attr('boolean', {defaultValue: false}),
 	partie: DS.belongsTo('partie')
@@ -253,7 +293,7 @@ App.Partie = DS.Model.extend({
             return previousValue + donne.get("ptsMarquesEO");
         }, 0);
     }.property("donnes.@each.ptsMarquesEO"),
-	donnes: DS.hasMany('donne', {async: true})
+	donnes: DS.hasMany('donne')
 });
 
 //Components
