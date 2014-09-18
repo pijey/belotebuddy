@@ -1,5 +1,6 @@
 App = Ember.Application.create();
 
+App.ApplicationSerializer = DS.LSSerializer.extend();
 App.ApplicationAdapter = DS.LSAdapter.extend({
   namespace: 'app-emberjs'
 });
@@ -134,12 +135,10 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 		save: function() {
 			var partie = this.get("partie");
 			var donne = this.model;
-			var donnes = partie.get('donnes');
-
-			donnes.addObject(donne);
-			donne.set('partie', partie);
+			donne.set("partie", partie);
 			donne.save().then(function(){
-				partie.save();	
+				partie.get('donnes').addObject(donne);
+				partie.save();
 			});
   		},
   		updatedPtsFaitsNS: function(){
@@ -293,7 +292,7 @@ App.Partie = DS.Model.extend({
             return previousValue + donne.get("ptsMarquesEO");
         }, 0);
     }.property("donnes.@each.ptsMarquesEO"),
-	donnes: DS.hasMany('donne')
+	donnes: DS.hasMany('donne', {async: true}),
 });
 
 //Components
