@@ -13,7 +13,13 @@
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a class="navbar-brand" href="#">BeloteBuddy</a>
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+			        </button>	
+			        <a class="navbar-brand" href="#">BeloteBuddy</a>
 				</div>
 
 				<!-- Collect the nav links, forms, and other content for toggling -->
@@ -74,7 +80,7 @@
 				{{#each model.donnes}}
 				<tr>
 					<td>{{attaquant}}</td>
-					<td>{{contrat}} {{couleur}}</td>
+					<td>{{contrat}} <img {{bind-attr src="couleurImage"}} height=16 width=16 /></td>
 					<!--td>{{ptsFaitsNS}}</td-->
 					<!--td>{{ptsFaitsEO}}</td-->
 					<!--td>{{ptsReelsNS}}</td-->
@@ -125,7 +131,7 @@
 				{{#each}}
 				<tr>
 					<td>{{id}}</td>
-					<td>{{contrat}} {{couleur}}</td>
+					<td>{{contrat}} <img src="img/{{couleur}}.png"</td>
 					<!--td>{{ptsFaitsNS}}</td-->
 					<!--td>{{ptsFaitsEO}}</td-->
 					<!--td>{{ptsReelsNS}}</td-->
@@ -212,7 +218,7 @@
 		{{#my-modal title="Ajouter une donne" ok="save" close="removeModal"}}
 		<form class="form-horizontal" role="form" {{action 'ok' on='submit' target=view}}>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Attaquant</label>
+				<label class="col-sm-3 control-label hidden-xs">Attaquant</label>
 				<label class="radio-inline">
 					{{view Ember.RadioButton name="newAttaquant" selectionBinding="model.attaquant" value="NS"}} Nord-Sud
 				</label>
@@ -221,46 +227,66 @@
 				</label>
 			</div>
 			<div class="form-group">
-				<label for="inputContrat" class="col-sm-2 control-label">Contrat</label>
-				<div class="col-sm-6">
+				<label for="inputContrat" class="col-sm-3 control-label hidden-xs">Contrat</label>
+				<div class="col-sm-3">
 					{{view Ember.Select content=contrats value=model.contrat classNames="form-control"}}
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="inputCouleur" class="col-sm-2 control-label">Couleur</label>
-				<div class="col-sm-6">
-					{{view Ember.Select content=couleurs value=model.couleur classNames="form-control"}}
+				<label for="inputCouleur" class="col-sm-3 control-label hidden-xs">Couleur</label>
+				<div class="col-sm-3">
+					{{view Ember.Select content=couleurs value=model.couleur classNames="col-sm-3 form-control"}}
+				</div>
+			</div>
+			<hr>
+			<div class="form-group">
+			    <div class="col-sm-offset-2 col-sm-10">
+			      <div class="checkbox">
+			        <label for="beloteNS" class="col-sm-3 control-label">
+			          {{input type="checkbox" name="beloteNS" checked=model.beloteNS}} Belote 
+			        </label>
+			      </div>
+			    </div>
+		  	</div>
+			<div class="form-group">
+				<label for="inputPtsFaitsNS" class="col-sm-3 control-label hidden-xs">Pts faits NS</label>
+				<div class="col-sm-3">
+					{{input type="number" class="form-control" placeholder="Points faits NS" id="ptsFaitsNS" value=model.ptsFaitsNS action="updatedPtsFaitsNS" on="enter"}}
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-sm-10">
-					<label for="inputPtsFaitsNS" class="col-sm-6 control-label">Points faits Nord-Sud</label>
-					{{input type="number" id="ptsFaitsNS" value=model.ptsFaitsNS action="updatedPtsFaitsNS" on="enter"}}
-					{{input type="checkbox" name="beloteNS" checked=model.beloteNS}} Belote
-				</div>
-				<div class="col-sm-10">
-					<label for="inputPtsReelsNS" class="col-sm-6 control-label">Points réels Nord-Sud</label>
-					{{input type="number" readonly=true id="ptsReelsNS" value=model.ptsReelsNS}}
-				</div>
-				<div class="col-sm-10">
-					<label for="inputPtsMarquesNS" class="col-sm-6 control-label">Points marqués Nord-Sud</label>
-					{{input type="number" readonly=true id="ptsMarquesNS" value=model.ptsMarquesNS}}
-				</div>
+				<label for="inputPtsReelsNS" class="col-sm-3 control-label hidden-xs">Pts réels NS</label>
+				<label class="col-sm-3 control-label">{{model.ptsReelsNS}} <span class="visible-xs">points réels NS</span></label>
 			</div>
 			<div class="form-group">
-				<div class="col-sm-10">
-					<label for="inputPtsFaitsEO" class="col-sm-6 control-label">Points faits Est-Ouest</label>
-					{{input type="number" id="ptsFaitsEO" value=model.ptsFaitsEO action="updatedPtsFaitsEO" on="enter"}}
-					{{input type="checkbox" name="beloteEO" checked=model.beloteEO}} Belote
+				<label for="inputPtsMarquesNS" class="col-sm-3 control-label hidden-xs">Pts marqués NS</label>
+				<label class="col-sm-3 control-label">{{model.ptsMarquesNS}}</label><span class="visible-xs">points marqués NS</span>
+			</div>
+			<hr>
+			<div class="form-group">
+			    <div class="col-sm-offset-2 col-sm-10">
+			      <div class="checkbox">
+			        <label for="beloteEO" class="col-sm-3 control-label">
+			          {{input type="checkbox" name="beloteEO" checked=model.beloteEO}} Belote 
+			        </label>
+			      </div>
+			    </div>
+		  	</div>
+			<div class="form-group">
+				<label for="inputPtsFaitsEO" class="col-sm-3 control-label hidden-xs">Pts faits EO</label>
+				<div class="col-sm-3">
+					{{input type="number" class="form-control" placeholder="Points faits EO" id="ptsFaitsEO" value=model.ptsFaitsEO action="updatedPtsFaitsEO" on="enter"}}
 				</div>
-				<div class="col-sm-10">
-					<label for="inputPtsReelsEO" class="col-sm-6 control-label">Points réels Est-Ouest</label>
-					{{input type="number" readonly=true id="ptsReelsEO" value=model.ptsReelsEO}}
-				</div>
-				<div class="col-sm-10">
-					<label for="inputPtsMarquesEO" class="col-sm-6 control-label">Points marqués Est-Ouest</label>
-					{{input type="number" readonly=true id="ptsMarquesEO" value=model.ptsMarquesEO}}
-				</div>
+
+				
+			</div>
+			<div class="form-group">
+				<label for="inputPtsReelsEO" class="col-sm-3 control-label hidden-xs">Pts réels EO</label>
+				<label class="col-sm-3 control-label">{{model.ptsReelsEO}} <span class="visible-xs">points réels EO</span></label>
+			</div>
+			<div class="form-group">
+				<label for="inputPtsMarquesEO" class="col-sm-3 control-label hidden-xs">Pts marqués EO</label>
+				<label class="col-sm-3 control-label">{{model.ptsMarquesEO}} <span class="visible-xs">points marqués EO</span></label>
 			</div>
 		</form>
 	</form>

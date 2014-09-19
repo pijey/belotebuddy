@@ -2,6 +2,9 @@ var attr = DS.attr;
 App.Donne = DS.Model.extend({
     attaquant: attr('string'),
     contrat: attr('string'),
+    couleurImage: function(){
+        return "img/" + this.get("couleur") + ".png";
+    }.property('couleur'),
     couleur: attr('string'),
     ptsFaitsNS: attr('number'),
     ptsFaitsEO: attr('number'),
