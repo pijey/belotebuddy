@@ -22,6 +22,9 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
   			this.calculerPoints();
   		}
 	},
+	controleCoherence: function(){
+		//if(this.model.get('attaquant') === 'NS'){
+	},
 	calculerPoints: function(){
 		var total = 162;
 		var coef = 1.0;
