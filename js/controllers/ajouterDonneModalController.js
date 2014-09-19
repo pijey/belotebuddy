@@ -15,15 +15,29 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
   		},
   		updatedPtsFaitsNS: function(){
   			this.model.set('ptsFaitsEO', 162 - parseInt(this.get('ptsFaitsNS')));
-  			this.calculerPoints();
+  			if (this.controleCoherence()){
+				this.calculerPoints();
+			}
   		},
   		updatedPtsFaitsEO: function(){
   			this.model.set('ptsFaitsNS', 162 - parseInt(this.get('ptsFaitsEO')));
-  			this.calculerPoints();
+  			if (this.controleCoherence()){
+				this.calculerPoints();
+			}
   		}
 	},
 	controleCoherence: function(){
-		//if(this.model.get('attaquant') === 'NS'){
+		if(this.model.get('attaquant') !== 'NS' && this.model.get('attaquant') !== 'EO'){
+			return false;
+		}
+		if(isNaN(parseInt(this.model.get('ptsFaitsEO'))) || isNaN(parseInt(this.model.get('ptsFaitsNS')))){
+			return false;
+		}
+		if(parseInt(this.model.get('contrat')) === "Sans-Atout" && (this.model.get('beloteNS')  || this.model.get('beloteEO'))){
+			return false;
+		}
+
+		return true;
 	},
 	calculerPoints: function(){
 		var total = 162;
