@@ -3,6 +3,14 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 	couleurs: ["Coeur","Carreau","Pique","Trèfle","Sans-Atout","Tout-Atout"],
 	needs: "partie",
 	partie: Ember.computed.alias("controllers.partie.model"), 
+	isSansAtout: function(){
+		if (this.model.get('couleur') === 'Sans-Atout'){
+			this.model.set('beloteNS', false);
+			this.model.set('beloteEO', false);
+			return true;
+		}
+		return false;
+	}.property('model.couleur'),
 	actions: {
 		save: function() {
 			var partie = this.get("partie");
@@ -28,13 +36,13 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 	},
 	controleCoherence: function(){
 		if(this.model.get('attaquant') !== 'NS' && this.model.get('attaquant') !== 'EO'){
-			return false;
+			alert('Merci de choisir un attaquant');
 		}
 		if(isNaN(parseInt(this.model.get('ptsFaitsEO'))) || isNaN(parseInt(this.model.get('ptsFaitsNS')))){
-			return false;
+			alert('Le nombre de points renseigné est invalide');
 		}
 		if(parseInt(this.model.get('contrat')) === "Sans-Atout" && (this.model.get('beloteNS')  || this.model.get('beloteEO'))){
-			return false;
+			alert('Il n\'y a pas de belote à sans-atout');
 		}
 
 		return true;
@@ -78,7 +86,7 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 		{
 			//Tout Atout
 			total = 258;
-			coef = 0.6279;
+			coef = 0.627906976744186;
 		}
 		
 		//Calcul des points reels
@@ -110,6 +118,9 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 		var contrat;
 		if(contratString !== "Capot"){
 			contrat = parseInt(contratString);
+		}
+		else {
+			contrat = 250;
 		}
 		ptsmarques = parseInt(Math.floor(ptsAttaque * coef));
 		

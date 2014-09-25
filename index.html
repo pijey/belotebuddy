@@ -203,8 +203,8 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td>{{model.scoreNS}}</td>
-					<td>{{model.scoreEO}}</td>
+					<td><h1>{{model.scoreNS}}</h1></td>
+					<td><h1>{{model.scoreEO}}</h1></td>
 				</tr>
 			</tbody>
 		</table>
@@ -243,7 +243,7 @@
 			    <div class="col-sm-offset-2 col-sm-10">
 			      <div class="checkbox">
 			        <label for="beloteNS" class="col-sm-3 control-label">
-			          {{input type="checkbox" name="beloteNS" checked=model.beloteNS}} Belote 
+			          {{input type="checkbox" disabled=isSansAtout name="beloteNS" checked=model.beloteNS}} Belote 
 			        </label>
 			      </div>
 			    </div>
@@ -267,7 +267,7 @@
 			    <div class="col-sm-offset-2 col-sm-10">
 			      <div class="checkbox">
 			        <label for="beloteEO" class="col-sm-3 control-label">
-			          {{input type="checkbox" name="beloteEO" checked=model.beloteEO}} Belote 
+			          {{input type="checkbox" disabled=isSansAtout name="beloteEO" checked=model.beloteEO}} Belote 
 			        </label>
 			      </div>
 			    </div>
