@@ -59,8 +59,11 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 			
 		var ptsAttaque = 0;
 		var ptsDefense = 0;
+		var ptsBeloteAttaque = 0;
+		var ptsBeloteDefense = 0;
 		var beloteAttaque = false;
 		var beloteDefense = false;
+
 		if(this.model.get('attaquant') === 'NS'){
 			ptsAttaque = parseInt(this.model.get("ptsFaitsNS"));
 			ptsDefense = parseInt(this.model.get("ptsFaitsEO"));
@@ -90,8 +93,8 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 		}
 		
 		//Calcul des points reels
-		this.model.set('ptsReelsEO',Math.round(this.get("ptsFaitsEO") * coef / 10) * 10);
-		this.model.set('ptsReelsNS',Math.round(this.get("ptsFaitsNS") * coef / 10) * 10);
+		this.model.set('ptsReelsEO',Math.round(Math.floor(this.get("ptsFaitsEO") * coef) / 10) * 10);
+		this.model.set('ptsReelsNS',Math.round(Math.floor(this.get("ptsFaitsNS") * coef) / 10) * 10);
 
 		atmod = Math.floor(ptsAttaque * coef) % 10;
 		demod = Math.floor(ptsDefense * coef) % 10;
@@ -103,12 +106,14 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 		
 		if(beloteAttaque)
 		{
-			ptsAttaque += 20;
+			ptsBeloteAttaque = 20;
+			ptsAttaque += ptsBeloteAttaque;
 		}
 			
 		if(beloteDefense)
 		{
-			ptsDefense += 20;
+			ptsBeloteDefense = 20;
+			ptsDefense += ptsBeloteDefense;
 		}
 		
 		var ptsMarquesDefense = Math.floor(parseInt((ptsDefense * coef)) + dereste - demod);
@@ -116,36 +121,58 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 
 		var contratString = this.model.get('contrat');
 		var contrat;
+		
+		ptsmarques = parseInt(Math.floor(ptsAttaque * coef));
 		if(contratString !== "Capot"){
 			contrat = parseInt(contratString);
+			if(contrat <= ptsmarques)
+			{
+				this.model.set('donneFaite', true);
+				if(this.model.get('attaquant') === 'NS'){
+					this.model.set('ptsMarquesNS',ptsMarquesAttaque + contrat);
+					this.model.set('ptsMarquesEO',ptsMarquesDefense);
+				}
+				else {
+					this.model.set('ptsMarquesNS',ptsMarquesDefense);
+					this.model.set('ptsMarquesEO',ptsMarquesAttaque + contrat);
+				}
+			}
+			else
+			{
+				this.model.set('donneFaite', false);
+				if(this.model.get('attaquant') === 'NS'){
+					this.model.set('ptsMarquesNS',ptsBeloteAttaque);
+					this.model.set('ptsMarquesEO',160 + contrat);
+				}
+				else {
+					this.model.set('ptsMarquesNS',160 + contrat);
+					this.model.set('ptsMarquesEO',ptsBeloteAttaque);
+				}
+			}
 		}
 		else {
 			contrat = 250;
-		}
-		ptsmarques = parseInt(Math.floor(ptsAttaque * coef));
-		
-		if(contrat <= ptsmarques)
-		{
-			this.model.set('donneFaite', true);
-			if(this.model.get('attaquant') === 'NS'){
-				this.model.set('ptsMarquesNS',ptsMarquesAttaque + contrat);
-				this.model.set('ptsMarquesEO',ptsMarquesDefense);
+			if(ptsDefense > 0){
+				this.model.set('donneFaite', false);
+				if(this.model.get('attaquant') === 'NS'){
+					this.model.set('ptsMarquesNS',ptsBeloteAttaque);
+					this.model.set('ptsMarquesEO',160 + contrat);
+				}
+				else {
+					this.model.set('ptsMarquesNS',160 + contrat);
+					this.model.set('ptsMarquesEO',ptsBeloteAttaque);
+				}
 			}
 			else {
-				this.model.set('ptsMarquesNS',ptsMarquesDefense);
-				this.model.set('ptsMarquesEO',ptsMarquesAttaque + contrat);
-			}
-		}
-		else
-		{
-			this.model.set('donneFaite', false);
-			if(this.model.get('attaquant') === 'NS'){
-				this.model.set('ptsMarquesNS',0);
-				this.model.set('ptsMarquesEO',160 + contrat);
-			}
-			else {
-				this.model.set('ptsMarquesNS',160 + contrat);
-				this.model.set('ptsMarquesEO',0);
+				this.model.set('donneFaite', true);
+				if(this.model.get('attaquant') === 'NS'){
+					this.model.set('ptsMarquesNS',500 + ptsBeloteAttaque);
+					this.model.set('ptsMarquesEO',0);
+				}
+				else {
+					this.model.set('ptsMarquesNS',0);
+					this.model.set('ptsMarquesEO',500 + ptsBeloteAttaque);
+				}
 			}
 		}
 	}

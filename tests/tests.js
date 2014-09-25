@@ -356,8 +356,8 @@ test('Calcul des points : 80 Tout-Atout NS chuté', function() {
         couleur: "Tout-Atout",
         beloteNS: false,
         beloteEO: false,
-        ptsFaitsNS: 126,
-        ptsFaitsEO: 132
+        ptsFaitsNS: 127,
+        ptsFaitsEO: 131
       }));
   controller.calculerPoints();
   equal(controller.model.get('ptsReelsNS'), 80, "Points Reels NS : 80");
@@ -376,8 +376,8 @@ test('Calcul des points : 90 Tout-Atout NS chuté', function() {
         couleur: "Tout-Atout",
         beloteNS: false,
         beloteEO: false,
-        ptsFaitsNS: 142,
-        ptsFaitsEO: 116
+        ptsFaitsNS: 143,
+        ptsFaitsEO: 115
       }));
   controller.calculerPoints();
   equal(controller.model.get('ptsReelsNS'), 90, "Points Reels NS : 90");
@@ -396,8 +396,8 @@ test('Calcul des points : 100 Tout-Atout NS chuté', function() {
         couleur: "Tout-Atout",
         beloteNS: false,
         beloteEO: false,
-        ptsFaitsNS: 158,
-        ptsFaitsEO: 100
+        ptsFaitsNS: 159,
+        ptsFaitsEO: 99
       }));
   controller.calculerPoints();
   equal(controller.model.get('ptsReelsNS'), 100, "Points Reels NS : 100");
@@ -416,8 +416,8 @@ test('Calcul des points : 110 Tout-Atout NS chuté', function() {
         couleur: "Tout-Atout",
         beloteNS: false,
         beloteEO: false,
-        ptsFaitsNS: 174,
-        ptsFaitsEO: 84
+        ptsFaitsNS: 175,
+        ptsFaitsEO: 83
       }));
   controller.calculerPoints();
   equal(controller.model.get('ptsReelsNS'), 110, "Points Reels NS : 110");
@@ -436,8 +436,8 @@ test('Calcul des points : 120 Tout-Atout NS chuté', function() {
         couleur: "Tout-Atout",
         beloteNS: false,
         beloteEO: false,
-        ptsFaitsNS: 190,
-        ptsFaitsEO: 68
+        ptsFaitsNS: 191,
+        ptsFaitsEO: 67
       }));
   controller.calculerPoints();
   equal(controller.model.get('ptsReelsNS'), 120, "Points Reels NS : 120");
@@ -456,8 +456,8 @@ test('Calcul des points : 130 Tout-Atout NS chuté', function() {
         couleur: "Tout-Atout",
         beloteNS: false,
         beloteEO: false,
-        ptsFaitsNS: 206,
-        ptsFaitsEO: 52
+        ptsFaitsNS: 207,
+        ptsFaitsEO: 51
       }));
   controller.calculerPoints();
   equal(controller.model.get('ptsReelsNS'), 130, "Points Reels NS : 130");
@@ -543,6 +543,6 @@ test('Calcul des points : Capot Tout-Atout NS chuté', function() {
   equal(controller.model.get('ptsReelsNS'), 160, "Points Reels NS : 160");
   equal(controller.model.get('ptsReelsEO'), 0, "Points Reels EO : 0");
   equal(controller.model.get('ptsMarquesNS'), 0, "Points marqués NS : 0");
-  equal(controller.model.get('ptsMarquesEO'), 370, "Points marqués EO : 370");
+  equal(controller.model.get('ptsMarquesEO'), 410, "Points marqués EO : 410");
   equal(controller.model.get('donneFaite'), false, "Donne chutée");
 });
