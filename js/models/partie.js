@@ -1,7 +1,9 @@
 var attr = DS.attr;
 App.Partie = DS.Model.extend({
 	enCours: attr("boolean"),
-	date: attr('date'),
+	nomNS: attr("string", {defaultValue: "Nord-Sud"}),
+    nomEO: attr("string", {defaultValue: "Est-Ouest"}),
+    date: attr('date'),
 	scoreNS: function(){
         var donnes = this.get("donnes");
         return donnes.reduce(function(previousValue, donne){

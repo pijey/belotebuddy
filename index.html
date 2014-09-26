@@ -197,7 +197,16 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<td>Nord-Sud</td>
+					<td>
+						{{#if isEditingNomNS}}
+					      <input class="edit form-control" {{bind-attr value=model.nomNS}} {{action "updateNomNS" model on="focusOut"}}>
+					    {{else}}
+					      	{{model.nomNS}}
+							<button {{action "editNomNS" on="click"}} type="button" class="btn btn-default btn-sm">
+					      		<span class="glyphicon glyphicon-edit"></span> Modifier
+					      	</button>
+					    {{/if}}
+					</td>
 					<td>Est-Ouest</td>
 				</tr>
 			</thead>
