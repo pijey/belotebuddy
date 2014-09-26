@@ -80,7 +80,7 @@
 				{{#each model.donnes}}
 				<tr>
 					<td>{{attaquant}}</td>
-					<td>{{contrat}} <img {{bind-attr src="couleurImage"}} height=16 width=16 /></td>
+					<td>{{contrat}} <img {{bind-attr src="couleurImage"}} height=20 width=22 /></td>
 					<!--td>{{ptsFaitsNS}}</td-->
 					<!--td>{{ptsFaitsEO}}</td-->
 					<!--td>{{ptsReelsNS}}</td-->
@@ -199,15 +199,24 @@
 				<tr>
 					<td>
 						{{#if isEditingNomNS}}
-					      <input class="edit form-control" {{bind-attr value=model.nomNS}} {{action "updateNomNS" model on="focusOut"}}>
+					      {{input class="edit form-control" value=model.nomNS action="updateNomNS" on="enter"}}
 					    {{else}}
 					      	{{model.nomNS}}
 							<button {{action "editNomNS" on="click"}} type="button" class="btn btn-default btn-sm">
-					      		<span class="glyphicon glyphicon-edit"></span> Modifier
+					      		<span class="glyphicon glyphicon-edit"></span>
 					      	</button>
 					    {{/if}}
 					</td>
-					<td>Est-Ouest</td>
+					<td>
+						{{#if isEditingNomEO}}
+					      {{input class="edit form-control" value=model.nomEO action="updateNomEO" on="enter"}}
+					    {{else}}
+					      	{{model.nomEO}}
+							<button {{action "editNomEO" on="click"}} type="button" class="btn btn-default btn-sm">
+					      		<span class="glyphicon glyphicon-edit"></span>
+					      	</button>
+					    {{/if}}
+					</td>
 				</tr>
 			</thead>
 			<tbody>

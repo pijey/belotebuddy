@@ -3,12 +3,19 @@ App.PartieController = Ember.ObjectController.extend({
 		editNomNS: function(){
 			this.set('isEditingNomNS', true);
 		},
-		updateNomNS: function(model){
-			this.model.set("nomNS", model.get("nomNS"));
+		editNomEO: function(){
+			this.set('isEditingNomEO', true);
+		},
+		updateNomNS: function(){
 			this.model.save();
 			this.set('isEditingNomNS', false);
+		},
+		updateNomEO: function(){
+			this.model.save();
+			this.set('isEditingNomEO', false);
 		}
 	},
 
 	isEditingNomNS: false,
+	isEditingNomEO: false,
 });
