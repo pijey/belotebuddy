@@ -175,7 +175,7 @@
 				{{#each}}
 				<tr>
 					<td>{{id}}</td>
-					<td>{{date}}</td>
+					<td>{{formatedDate}}</td>
 					<td>{{enCours}}</td>
 					<td>
 						<button {{action 'deletePartie' id}} type="button" class="btn btn-default btn-sm" data-toggle="modal">
@@ -334,6 +334,7 @@
 </script>
 
 <!--Libs-->
+<script src="js/libs/moment.js"></script>
 <script src="js/libs/jquery-1.10.2.js"></script>
 <script src="js/libs/bootstrap.min.js"></script>
 <script src="js/libs/handlebars-1.1.2.js"></script>
