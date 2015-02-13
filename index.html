@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Ember Starter Kit</title>
+	<title>BeloteBuddy</title>
 	<link rel="stylesheet" href="css/normalize.css">
 	<link rel="stylesheet" href="css/style.css">
 	<link rel="stylesheet" href="css/bootstrap.min.css">
@@ -29,7 +29,9 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Partie <span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
 								{{#each partie in model}}
-								<li>{{#link-to 'partie' partie}}Partie {{partie.id}}{{/link-to}}</li>
+									{{#if partie.enCours}}
+										<li>{{#link-to 'partie' partie}}Partie {{partie.id}}{{/link-to}}</li>  
+									{{/if}}
 								{{/each}}
 								<li><a href="#" {{action 'newPartie'}}>Nouvelle partie</a></li>
 								<li>{{#link-to 'parties'}}Toutes les parties{{/link-to}}</li>
@@ -101,12 +103,22 @@
 					</td>
 				</tr>
 				{{/each}}
+				<tr class="info">
+					<td><strong>Total</strong></td>
+					<td></td>
+					<td><strong>{{model.scoreNS}}</strong></td>
+					<td><strong>{{model.scoreEO}}</strong></td>
+					<td></td>
+					<td></td>
+				</tr>
 			</tbody>
 		</table>
 		{{else}}
 		Aucune donne dans cette partie.
 		{{/if}}
 		{{#link-to 'partie' model}}Retour à la partie{{/link-to}}
+
+		{{#view "chartEvolutionScore" id="chartEvolutionScore"}}{{/view}}
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="alldonnes">
@@ -167,6 +179,8 @@
 				<tr>
 					<td>Id</td>
 					<td>Date</td>
+					<td>Score NS</td>
+					<td>Score EO</td>
 					<td>En cours</td>
 					<td>Actions</td>
 				</tr>
@@ -176,12 +190,25 @@
 				<tr>
 					<td>{{id}}</td>
 					<td>{{formatedDate}}</td>
-					<td>{{enCours}}</td>
+					<td>{{scoreNS}}</td>
+					<td>{{scoreEO}}</td>
+					<td>
+						{{#if enCours}}
+							<span class="glyphicon glyphicon-time"></span>
+						{{else}}
+							<span class="glyphicon glyphicon-ok"></span>
+						{{/if}}
+					</td>
 					<td>
 						<button {{action 'deletePartie' id}} type="button" class="btn btn-default btn-sm" data-toggle="modal">
 							<span class="glyphicon glyphicon-remove"></span> Supprimer
 						</button>
-						{{#link-to 'donnes' id}}Voir les donnes{{/link-to}}
+						{{#link-to 'donnes' id class="btn btn-default btn-sm"}}
+							<span class="glyphicon glyphicon-th-list"></span>
+							Voir les donnes{{/link-to}}
+						{{#link-to 'partie' id class="btn btn-default btn-sm"}}
+							<span class="glyphicon glyphicon-log-in"></span>
+							Voir la partie{{/link-to}}
 					 </td>
 				</tr>
 				{{/each}}
@@ -229,7 +256,7 @@
 		<button {{action 'showModal' 'ajouterDonneModal' model}} type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#ajouterDonne">
 			<span class="glyphicon glyphicon-plus"></span> Ajouter une donne
 		</button>
-		{{#link-to 'donnes' model}}Voir toutes les donnes{{/link-to}}
+		{{#link-to 'donnes' model class="btn btn-default btn-sm" }}<span class="glyphicon glyphicon-th-list"></span> Voir les donnes{{/link-to}}
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="ajouterDonneModal">
@@ -238,10 +265,10 @@
 			<div class="form-group">
 				<label class="col-sm-3 control-label hidden-xs">Attaquant</label>
 				<label class="radio-inline">
-					{{view Ember.RadioButton name="newAttaquant" selectionBinding="model.attaquant" value="NS"}} Nord-Sud
+					{{view Ember.RadioButton name="newAttaquant" selectionBinding="model.attaquant" value="NS"}} {{partie.nomNS}}
 				</label>
 				<label class="radio-inline">
-					{{view Ember.RadioButton name="newAttaquant" selectionBinding="model.attaquant" value="EO"}} Est-Ouest
+					{{view Ember.RadioButton name="newAttaquant" selectionBinding="model.attaquant" value="EO"}} {{partie.nomEO}}
 				</label>
 			</div>
 			<div class="form-group">
@@ -249,62 +276,49 @@
 				<div class="col-sm-3">
 					{{view Ember.Select content=contrats value=model.contrat classNames="form-control"}}
 				</div>
-			</div>
-			<div class="form-group">
-				<label for="inputCouleur" class="col-sm-3 control-label hidden-xs">Couleur</label>
 				<div class="col-sm-3">
 					{{view Ember.Select content=couleurs value=model.couleur classNames="col-sm-3 form-control"}}
 				</div>
 			</div>
 			<hr>
 			<div class="form-group">
-			    <div class="col-sm-offset-2 col-sm-10">
-			      <div class="checkbox">
-			        <label for="beloteNS" class="col-sm-3 control-label">
-			          {{input type="checkbox" disabled=isSansAtout name="beloteNS" checked=model.beloteNS}} Belote 
-			        </label>
-			      </div>
-			    </div>
-		  	</div>
-			<div class="form-group">
 				<label for="inputPtsFaitsNS" class="col-sm-3 control-label hidden-xs">Pts faits NS</label>
-				<div class="col-sm-3">
-					{{input type="number" class="form-control" placeholder="Points faits NS" id="ptsFaitsNS" value=model.ptsFaitsNS action="updatedPtsFaitsNS" on="enter"}}
+				<div class="col-sm-2">
+					{{input type="number" class="form-control" id="ptsFaitsNS" value=model.ptsFaitsNS action="updatedPtsFaitsNS" on="enter"}}
 				</div>
+				<div class="checkbox">
+			        <label for="beloteNS" class="col-sm-2 control-label">
+			          {{input type="checkbox" disabled=isBeloteNSDisabled name="beloteNS" checked=model.beloteNS}} Belote 
+			        </label>
+			    </div>
 			</div>
 			<div class="form-group">
 				<label for="inputPtsReelsNS" class="col-sm-3 control-label hidden-xs">Pts réels NS</label>
-				<label class="col-sm-3 control-label">{{model.ptsReelsNS}} <span class="visible-xs">points réels NS</span></label>
+				<label class="col-sm-2 control-label">{{model.ptsReelsNS}} <span class="visible-xs">points réels NS</span></label>
 			</div>
 			<div class="form-group">
 				<label for="inputPtsMarquesNS" class="col-sm-3 control-label hidden-xs">Pts marqués NS</label>
-				<label class="col-sm-3 control-label">{{model.ptsMarquesNS}}</label><span class="visible-xs">points marqués NS</span>
+				<label class="col-sm-2 control-label">{{model.ptsMarquesNS}}</label><span class="visible-xs">points marqués NS</span>
 			</div>
 			<hr>
 			<div class="form-group">
-			    <div class="col-sm-offset-2 col-sm-10">
-			      <div class="checkbox">
-			        <label for="beloteEO" class="col-sm-3 control-label">
-			          {{input type="checkbox" disabled=isSansAtout name="beloteEO" checked=model.beloteEO}} Belote 
-			        </label>
-			      </div>
-			    </div>
-		  	</div>
-			<div class="form-group">
 				<label for="inputPtsFaitsEO" class="col-sm-3 control-label hidden-xs">Pts faits EO</label>
-				<div class="col-sm-3">
-					{{input type="number" class="form-control" placeholder="Points faits EO" id="ptsFaitsEO" value=model.ptsFaitsEO action="updatedPtsFaitsEO" on="enter"}}
+				<div class="col-sm-2">
+					{{input type="number" class="form-control" id="ptsFaitsEO" value=model.ptsFaitsEO action="updatedPtsFaitsEO" on="enter"}}
 				</div>
-
-				
+				<div class="checkbox">
+			        <label for="beloteEO" class="col-sm-2 control-label">
+			          {{input type="checkbox" disabled=isBeloteEODisabled name="beloteEO" checked=model.beloteEO}} Belote 
+			        </label>
+			    </div>
 			</div>
 			<div class="form-group">
 				<label for="inputPtsReelsEO" class="col-sm-3 control-label hidden-xs">Pts réels EO</label>
-				<label class="col-sm-3 control-label">{{model.ptsReelsEO}} <span class="visible-xs">points réels EO</span></label>
+				<label class="col-sm-2 control-label">{{model.ptsReelsEO}} <span class="visible-xs">points réels EO</span></label>
 			</div>
 			<div class="form-group">
 				<label for="inputPtsMarquesEO" class="col-sm-3 control-label hidden-xs">Pts marqués EO</label>
-				<label class="col-sm-3 control-label">{{model.ptsMarquesEO}} <span class="visible-xs">points marqués EO</span></label>
+				<label class="col-sm-2 control-label">{{model.ptsMarquesEO}} <span class="visible-xs">points marqués EO</span></label>
 			</div>
 		</form>
 	</form>
@@ -348,8 +362,9 @@
 <!--Routes-->
 <script src="js/routes/applicationRoute.js"></script>
 <script src="js/routes/partieRoute.js"></script>
-<script src="js/routes/partiesRoute.js"></script>
+<script src="js/routes/partiesRoutes.js"></script>
 <script src="js/routes/donnesRoute.js"></script>
+<script src="js/routes/chartEvolutionScoreRoute.js"></script>
 <script src="js/routes/allDonnesRoute.js"></script>
 
 <!--Controllers-->
@@ -358,9 +373,11 @@
 <script src="js/controllers/donnesController.js"></script>
 <script src="js/controllers/partieController.js"></script>
 <script src="js/controllers/partiesController.js"></script>
+<script src="js/controllers/chartEvolutionScoreController.js"></script>
 
 <!--Views-->
 <script src="js/views/radioButtonView.js"></script>
+<script src="js/views/chartEvolutionScoreView.js"></script>
 
 <!--Models-->
 <script src="js/models/donne.js"></script>

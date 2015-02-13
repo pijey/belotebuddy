@@ -3,14 +3,28 @@ App.AjouterDonneModalController = Ember.ObjectController.extend({
 	couleurs: ["Coeur","Carreau","Pique","Trèfle","Sans-Atout","Tout-Atout"],
 	needs: "partie",
 	partie: Ember.computed.alias("controllers.partie.model"), 
-	isSansAtout: function(){
-		if (this.model.get('couleur') === 'Sans-Atout'){
-			this.model.set('beloteNS', false);
-			this.model.set('beloteEO', false);
+	isBeloteNSDisabled: function(){
+		if (this.model.get('couleur') === 'Sans-Atout' || this.model.get('beloteEO')){
 			return true;
 		}
 		return false;
-	}.property('model.couleur'),
+	}.property('model.couleur', 'model.beloteEO'),
+	isBeloteEODisabled: function(){
+		if (this.model.get('couleur') === 'Sans-Atout' || this.model.get('beloteNS')){
+			return true;
+		}
+		return false;
+	}.property('model.couleur', 'model.beloteNS'),
+	updateBeloteNS: function(){
+		if (this.model.get('ptsFaitsNS') && this.controleCoherence()){
+			this.calculerPoints();
+		}
+	}.observes('model.beloteNS'),
+	updateBeloteEO: function(){
+		if (this.model.get('ptsFaitsEO') && this.controleCoherence()){
+			this.calculerPoints();
+		}
+	}.observes('model.beloteEO'),
 	actions: {
 		save: function() {
 			var partie = this.get("partie");

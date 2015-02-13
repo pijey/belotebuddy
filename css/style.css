@@ -2,3 +2,8 @@
 .ember-application {
     margin: 20px;
 }
+
+#chartEvolutionScore {
+	width	: 100%;
+	height	: 500px;
+}	
